@@ -3,7 +3,6 @@
 var endPointUrl = "https://ugymtriathlon.azurewebsites.net/api/";
 class API {  
   constructor(apiName, param, fn){
-    console.log(arguments.length);
     this.apiName    = apiName;
     this.url        = endPointUrl;
     this.parameters = (param==null)?"":param;
@@ -94,5 +93,5 @@ api4PostProcess = function (apiName, response) {
     if ( parseInt(gamehistory[i].比賽編號) > 最後比賽編號) 最後比賽編號 = parseInt(gamehistory[i].比賽編號);
   }  
 }
-api4GetAllClosedGames =new GetAPI("GetAllActiveGameStatus","", api4PostProcess);
+api4GetAllClosedGames =new GetAPI("GetAllClosedGames","", api4PostProcess);
 
