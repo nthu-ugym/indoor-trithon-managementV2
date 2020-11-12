@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+  <title></title>
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.2.617/styles/kendo.common.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.2.617/styles/kendo.default.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.2.617/styles/kendo.default.mobile.min.css" />
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">    
+  <link rel="stylesheet" href="./4DotLoading/loading.css" />
+    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
+  
+  <script src="firebaseui.js"></script>
+  <link type="text/css" rel="stylesheet" href="firebaseui.css" />
+   
+  <script src="firebase_config.min.js"></script>  
+       
+  <script src="https://kendo.cdn.telerik.com/2020.2.617/js/jquery.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.2.617/js/kendo.all.min.js"></script>
+  <script src="./4DotLoading/loading.js"></script>
+  <script src="FileSave.js"></script>
+    
+  <!--Database 資料先用 JS 檔-->
+  <script src="./模擬資料.js"></script>
+  <!--  <script src="./過往比賽.js"></script>  -->
+  <!--  <script src="./院系.js"></script>-->
+      
+    
+      
+</head>
+<body>
+ 
+  <div id = "loginDiv" style="display:none"></div>
+  
+  <div id = "createAccountDiv" style="margin-left:30px;display:none">
+    <a style="font-size:30px; font-weight:bold;"><i style="color: dimgray" class="fa fa-user"></i> 帳號管理</a><br><hr>  
+    <label class="新增比賽表格項目標題">新增帳號 Email:</label>
+    <input id="新增帳號email" class="新增比賽表格項目內容" type="email" style="margin-left:61px"><br><br> 
+    <label class="新增比賽表格項目標題">新增帳號 Password:</label>
+    <input id="新增帳號pwd" class="新增比賽表格項目內容" type="password"><br>
+    密碼格式必須介於 6 到 20 個字，包含至少一個數字，一個大寫英文字母和一個小寫英文字母。不要使用特殊字元。
+    
+    <br><br>
+    <button class="新增比賽表格項目標題" id="新增帳號按鈕" onclick="createAccount()">新增帳號</button>
+    <br><br><hr>
+    <label class="新增比賽表格項目標題">刪除帳號 Email:</label>
+    <input id="刪除帳號email" class="新增比賽表格項目內容" type="email" style="margin-left:61px"><br><br> 
+    <button class="新增比賽表格項目標題" id="刪除帳號按鈕" onclick="deleteAccount()" style="background:red;color:white" >刪除帳號</button>    
+    <br><br><hr>
+  </div>  
+  
+  <!--  主頁面-->
+  <div id="NTHU_header">
+    <div style="font-size:20px;margin-left:30px; margin-right:30px" id="header">
+      <button style="font-size:20px" disabled="disabled" id="帳號管理按鈕"  onclick="帳號管理按鈕click()">帳號管理</button>
+      <button style="font-size:20px" disabled="disabled" id="院所系管理按鈕" onclick="院所系管理按鈕click()">院所系管理</button> 
+      <button style="font-size:20px" id="登出入按鈕"  onclick="登出入按鈕click()">登入</button> 
+      <a id="登出入訊息">請登入進行管理比賽</a>
+      <a id="版本" style="float:right;font-size:12px;margin-top:15px">v0.00</a>
+      <hr>
+      <img src='%E6%B8%85%E8%8F%AF%E5%A4%A7%E5%AD%B8logo.jpg'>
+
+    </div>
+  </div>
+
+  <div id="mainPage">
+    <div style="height: 30px"></div>
+
+    <div style="margin-left:30px; margin-right:30px" id="現行比賽">
+      <a style="font-size:30px; font-weight:bold;"><i style="color: dimgray" class="fa fa-trophy"></i> 現行比賽</a>
+      <button id="新增比賽按鈕" style="margin-left:20px; font-size:20px; height:40px; vertical-align:top" onclick="新增比賽按鈕click()">新增比賽</button>
+        <div style="height: 10px"></div>
+      <div id="現行比賽表格"></div>
+    </div>
+
+    <div style="height: 50px"></div>
+
+    <div style="margin-left:30px; margin-right:30px" id="過往比賽">  
+      <h1><i style="color: dimgray" class="fa fa-history"></i> 過往比賽 </h1>
+      <div id="過往比賽表格"></div>
+    </div>
+  </div>
+<!--  主頁面結束-->
+ 
+<!--新增比賽表格-->
+  <div id="新增比賽表格Div" style="margin-left:30px">
+    <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i> 回主畫面</h2>   
+    <h1 id="新增比賽表格header">新增比賽</h1>
+    <button style="font-size:20px" id="比賽資訊" onclick="比賽資訊click()">比賽資訊</button>
+    <button style="font-size:20px" id="報名名單" onclick="報名名單click()">報名名單</button>  
+    <button style="font-size:20px" id="比賽結果" onclick="比賽結果click()">比賽結果</button>  
+    <hr>
+
+    <div id="比賽資訊Div">   
+      <p>
+        <label class="新增比賽表格項目標題" id="比賽編號標題">比賽編號:</label>
+        <label class="新增比賽表格項目內容" id="比賽編號內容"></label>
+      </p>
+      <p>
+        <label class="新增比賽表格項目標題" style="vertical-align:top" id="比賽名稱標題">比賽名稱:</label>
+        <textarea class="新增比賽表格項目內容" id="比賽名稱內容" cols="74" rows="1"></textarea>
+      </p>      
+
+      <p>      
+        <label class="新增比賽表格項目標題" style="vertical-align:top">比賽說明: </label>    
+        <textarea class="新增比賽表格項目內容" id="比賽說明內容" cols="74" rows="5"></textarea>
+      </p>
+
+      <p>
+        <label class="新增比賽表格項目標題">比賽日期:</label>
+        <input id="比賽日期" class="新增比賽表格項目內容" type="date"> 
+
+        <label class="新增比賽表格項目標題" style="margin-left: 80px" >開始時間:</label>
+        <input id="開始時間" class="新增比賽表格項目內容" type="time" style="margin-left:0px" >     
+        <label class="新增比賽表格項目標題" style="margin-left: 63px" >結束時間:</label>
+        <input id="結束時間" class="新增比賽表格項目內容" type="time" style="margin-left:0px" >    
+      </p>
+
+      <p>
+        <label class="新增比賽表格項目標題">報名截止:</label>
+        <input id="截止日期" class="新增比賽表格項目內容" type="date"> 
+
+        <label class="新增比賽表格項目標題" style="margin-left: 80px" >截止時間:</label>
+        <input id="截止時間" class="新增比賽表格項目內容" type="time" style="margin-left:0px" >        
+      </p>
+           
+      <p>
+        <label class="新增比賽表格項目標題">參賽隊數:</label>
+        <input id="參賽隊數" class="新增比賽表格項目內容" style="width:186px" onchange="隊數修改()" > 
+        <label class="新增比賽表格項目標題">隊</label>      
+      </p>        
+
+      <p>
+        <label class="新增比賽表格項目標題">比賽種類:</label><br><br>
+
+        <input type="radio" id="個人三鐵" checked="checked" name="比賽種類">
+        <label class="新增比賽表格Raido">個人三鐵(個人做三項)</label>
+
+        <input type="radio" id="三人三鐵" name="比賽種類" style="margin-left:115px" >
+        <label class="新增比賽表格Raido">三人三鐵(每人做三項)</label>
+
+        <input type="radio" id="三人綜合" name="比賽種類" style="margin-left:47px">
+        <label class="新增比賽表格Raido">三人綜合(一人做一項)</label> <br>
+
+        <input type="radio" id="三人跑步" name="比賽種類">
+        <label class="新增比賽表格Raido">三人跑步</label>
+
+        <input type="radio" id="三人飛輪" name="比賽種類" style="margin-left:228px">
+        <label class="新增比賽表格Raido">三人飛輪</label>
+
+        <input type="radio" id="三人划船" name="比賽種類" style="margin-left:161px">
+        <label class="新增比賽表格Raido">三人划船</label> <br>      
+
+        <input type="radio" id="個人跑步" name="比賽種類">
+        <label class="新增比賽表格Raido">個人跑步</label>
+
+        <input type="radio" id="個人飛輪" name="比賽種類" style="margin-left:228px">
+        <label class="新增比賽表格Raido">個人飛輪</label>
+
+        <input type="radio" id="個人划船" name="比賽種類" style="margin-left:161px">
+        <label class="新增比賽表格Raido">個人划船</label>                                                       
+      </p>
+      <br>
+
+      <p>
+        <label class="新增比賽表格項目標題">比賽設定:</label>
+
+        <label class="新增比賽表格項目標題" style="margin-left:20px" >跑步距離:</label>      
+        <input id="跑步距離" class="新增比賽表格項目內容" style="margin-left:5px; width:90px" > 
+        <label class="新增比賽表格項目標題">公里</label>   
+
+        <label class="新增比賽表格項目標題" style="margin-left:34px" >飛輪距離:</label>      
+        <input id="飛輪距離" class="新增比賽表格項目內容" style="margin-left:0px; width:90px" > 
+        <label class="新增比賽表格項目標題">公里</label>              
+
+        <label class="新增比賽表格項目標題" style="margin-left:74px" >划船距離:</label>      
+        <input id="划船距離" class="新增比賽表格項目內容" style="margin-left:0px; width:90px" > 
+        <label class="新增比賽表格項目標題">公尺</label>             
+      </p>         
+
+      <div id="隊伍院所設定" style="margin-left:0px">  
+        <p>
+          <label class="新增比賽表格項目標題" id="隊伍title"   style="margin-left:0px">隊伍設定:</label>
+          <label class="新增比賽表格項目標題" id="學院title" style="margin-left:20px">學院</label>
+          <label class="新增比賽表格項目標題" id="系所title" style="margin-left:229px">系所</label>
+          <!-- 內容 appended by JS code -->
+
+        </p>                  
+      </div>
+      
+      <p>
+        <button class="新增比賽表格項目標題" id="新增比賽儲存按鈕" onclick="saveGame()">儲存</button>     
+        <label></label>
+      </p>      
+    </div>    
+  
+  <!--報名名單-->
+  <div id="報名名單Div"> 
+    <p>
+      <label class="新增比賽表格項目標題" id="報名名單比賽編號標題">比賽編號:</label>
+      <label class="新增比賽表格項目內容" id="報名名單比賽編號內容"></label>
+    </p>
+    <p>
+      <label class="新增比賽表格項目標題" style="vertical-align:top" id="報名名單比賽名稱標題">比賽名稱:</label>
+      <Label class="新增比賽表格項目內容" id="報名名單比賽名稱內容" cols="74" rows="1"></Label>
+    </p>
+    <p>
+      <label class="新增比賽表格項目標題" style="vertical-align:top" id="報名名單報名隊伍標題">報名隊伍:</label>
+      <Label class="新增比賽表格項目內容" id="報名名單報名隊伍內容" cols="74" rows="1"></Label>
+    </p>
+             
+    <div id="報名名單表格"></div>
+
+    <div id="報名名單內容">
+      <!--JS append 內容-->
+    </div>
+    
+    <br><br>
+    <button style="font-size:20px" id="報名名單Export" onclick="ExportClick(2)">匯出報名名單</button>  
+  </div>
+  <!--報名表單結束-->  
+  
+  <!--比賽結果-->
+  <div id="比賽結果Div"> 
+    <p>
+      <label class="新增比賽表格項目標題" id="比賽結果比賽編號標題">比賽編號:</label>
+      <label class="新增比賽表格項目內容" id="比賽結果比賽編號內容"></label>
+    </p>
+    <p>
+      <label class="新增比賽表格項目標題" style="vertical-align:top" id="比賽結果比賽名稱標題">比賽名稱:</label>
+      <Label class="新增比賽表格項目內容" id="比賽結果比賽名稱內容" cols="74" rows="1"></Label>
+    </p> 
+    <p>
+      <label class="新增比賽表格項目標題" style="vertical-align:top" id="比賽結果比賽名次標題">比賽名次:</label>
+      <Label class="新增比賽表格項目內容" id="比賽結果比賽名次內容" style="font-size:16px"></Label>
+    </p>       
+    <p>
+      <label class="新增比賽表格項目標題" style="vertical-align:top" id="比賽結果隊伍成績標題">隊伍成績:</label>
+      <Label class="新增比賽表格項目內容" id="比賽結果隊伍成績內容" cols="74" rows="1"></Label>
+    </p>    
+   
+    <div id="比賽結果表格"></div>   
+   
+    <div id="比賽結果內容">
+      <!--JS append 內容-->
+    </div>
+
+    <br><br>
+    <button style="font-size:20px" id="比賽結果Export" onclick="ExportClick(3)">匯出比賽結果</button>
+  </div>
+  <!--比賽結果結束--> 
+  
+  <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i> 回主畫面</h2>
+  
+</div>
+
+<!--新增比賽表格結束--> 
+  
+<!--院所系管理表單-->
+  <div id="院所系管理表單Div" style="margin-left:30px">
+    <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i>回主畫面</h2>     
+    <h1 id="院所系管理表單header"><i style="color: dimgray" class="fa fa-list-alt"></i> 院所系管理表單</h1>
+    <p>
+      <label class="報名名單標題">清華大學學院</label>
+      <label class="報名名單標題" id="清華大學系所" style="margin:100px">理學院</label>   
+    </p>
+    <p>
+      <input class="報名名單標題" id="學院input" style="margin-top:0px; margin-right:0px; width:200px"> 
+      <button class="院系所增加按鈕" onclick="增加學院按鈕click()">增加</button>
+      <input class="報名名單標題" id="系所input" style="margin-top:0px; margin-left:60px; margin-right:0px; width:500px"> 
+      <button class="院系所增加按鈕" onclick="增加所系按鈕click()">增加</button>    
+    <div>
+      <span id="學院List" style="display: inline-block; width: 255px; vertical-align:top">
+        <!--JS append 內容-->    
+      </span>
+      <span style="display: inline-block; width: 55px; "></span>
+      <span id="所系List"style="display: inline-block; width: 555px; vertical-align:top">
+        <!--JS append 內容-->
+      </span>
+    </div>
+
+  </div>  
+
+
+<!--院所系管理表單結束-->  
+  
+  <style>
+    .新增比賽表格項目標題 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .新增比賽表格項目內容 {
+      font-size: 20px;
+      margin-left: 20px;
+      margin-top: 0px;
+    } 
+    .新增比賽表格Raido {
+      font-size: 20px;
+      margin-right: 50px;
+      margin-top: 0px;
+    }
+    
+    .報名名單標題 {
+      font-size: 16px;
+/*      font-weight: bold;*/
+      margin-top: 10px;
+      margin-right: 100px;
+    }
+    .報名名單內容 {
+      font-size: 20px;
+      margin-left: 20px;
+      margin-top: 0px;
+    }    
+    
+    .學院List內容 {
+      font-size:20px;
+      margin-bottom:10px;
+      color:blue;
+      text-decoration: underline blue;
+    }
+    
+    .系所List內容 {
+      font-size:20px;
+      margin-bottom:10px;
+      margin-left:6px;
+    }
+     
+    .院系所增加按鈕 {
+      font-size: 17px;
+    }
+    .隊伍格式 {
+      font-size: 20px;
+      width: 88px ;
+      display:inline-block;
+/*      text-align:right;*/
+    }
+    
+  </style> 
+  
+  <script src="apiClasses.js"></script>   
+  <script src="functions.js"></script> 
+
+      
+</body>
+</html>
