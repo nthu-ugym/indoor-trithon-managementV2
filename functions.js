@@ -1,88 +1,4 @@
-// Test session ===========================
-//TODO: 處理輸入參數
-//const queryString = window.location.search;
-//console.log(queryString);
-//const urlParams = new URLSearchParams(queryString);
-//const name = urlParams.get('name')
-
-//$("#radio").prop("checked")
-
-async function aaaGet() {
-  var APIKEY;
-  await database.ref('/APIKEY').once('value', e=>{ 
-    APIKEY= e.val();  
-  });
-  console.log(APIKEY);
-  
-  await axios.get('https://ugymtriathlon.azurewebsites.net/api/GetAllActiveGameStatus?Code=Debug123')
-  .then(function (response) {
-    // handle success
-    console.log(JSON.parse(response.data));
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  console.log("aaa is done");
-}
-async function aaaPOST() {
-  
-  //檢查 response 的 status
-  //.then(function (response) {
-  // if(response.status == 200){...}
-  
-  
-  var APIKEY;
-  await database.ref('/APIKEY').once('value', e=>{ 
-    APIKEY= e.val();  
-  });
-  console.log(APIKEY);
-  
-  postBody = {
-    "比賽編號" : 3,
-    "直播連結" : "",
-    "報名起始日":"2020-11-13 08:00:00",
-    "截止時間" : "2020-12-13 18:00",
-    "比賽日期" : "2020-12-30",
-    "比賽名稱" : "第3屆室內三鐵挑戰賽",
-    "比賽說明" : "無",
-    "時間範圍" : "08:00~17:00",  
-    "隊數限制" : 5,
-    "團隊人數" : 3,
-    "報名人數" : 12,
-    "比賽種類" : "三人三鐵", 
-    "比賽距離" : "跑步機: 10公里 ,飛輪車: 30公里 ,划船器: 2000公尺",  
-    "學院系所" : [
-                  "1:理學院,1:數學系",
-                  "2:工學院,0:工學院",            
-                  "4:人文社會學院,7:哲學研究所",            
-                  "8:清華學院,2:體育室",            
-                  "11:藝術學院,1:音樂學系"           
-                ]
-  };
-
-  await axios.post('https://ugymtriathlon.azurewebsites.net/api/CreateOrUpdateGame?GameId=3&Code=Debug123', postBody)
-  .then(function (response) {
-    // handle success
-    console.log(JSON.parse(response.data));
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  console.log("aaaPOST is done");
-}
-// end of test session ======================
-
-$("#版本").text("V0.65");
+$("#版本").text("V2.00");
 
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
@@ -106,13 +22,12 @@ var myUser;
 $(document).ready(function() {
 
   initializaData();
-
+  
   //Firebase authrization 狀態改變 callback
   firebase.auth().onAuthStateChanged(async function(user) {
     myUser=user;
     if (user) {
       console.log("User is signed in.", user.email);
-
       await database.ref('/validEmails').once('value', e=>{ 
         validEmails=JSON.parse(e.val());  
       });
@@ -161,6 +76,16 @@ $(document).ready(function() {
             $("#帳號管理按鈕").prop("disabled","disabled");    
             $("#院所系管理按鈕").prop("disabled","disabled");         
         }
+        
+        //Use API to get 現行比賽
+        api3GetAllActiveGameStatus.getAPI();//改用 apiClasses 方式
+
+        //Use API to get 過往比賽
+        api4GetAllClosedGames.getAPI(); //改用 apiClasses 方式
+
+        //Use API to get 學院
+        api2GetAllSchoolUnits.getAPI(); //改用 apiClasses 方式        
+                
       }
 
     } else {
@@ -272,20 +197,6 @@ $(document).ready(function() {
 
 //=== Initialization Data =====================
 function initializaData(){
-  //1. API 讀取 Database，取得 現行比賽 過往比賽 所有學院, 
-  //Use API to get 現行比賽
-  //get現行比賽(); 
-  api3GetAllActiveGameStatus.getAPI();//改用 apiClasses 方式
-
-  //Use API to get 過往比賽
-  //get過往比賽();
-  api4GetAllClosedGames.getAPI(); //改用 apiClasses 方式
-  
-  //Use API to get 學院
-  //get學院();
-  api2GetAllSchoolUnits.getAPI(); //改用 apiClasses 方式
-
-  //2. 初始現行比賽及過往比賽表格
   //比賽表格的 schema 定義
   schemaModel = {
         fields: {
@@ -443,14 +354,17 @@ function initializaData(){
     },  
     {
       field: "No1",
+      title: "隊員1",
       width: "100px",
     },
     {
       field: "No2",
+      title: "隊員2",      
       width: "100px"
     },
     {
       field: "No3",
+      title: "隊員3",      
       width: "100px"
     },                  
     {
@@ -475,14 +389,17 @@ function initializaData(){
     },  
     {
       field: "No1",
+      title: "隊員1",      
       width: "100px",
     },
     {
       field: "No2",
+      title: "隊員2",      
       width: "100px"
     },
     {
       field: "No3",
+      title: "隊員3",      
       width: "100px"
     } 
   ];    
@@ -635,6 +552,7 @@ function editClick(e) {
   比賽資訊click();  
 }    
 
+//現行比賽的 直播按鈕 handler
 function 直播link(e) {
   console.log("直播link");
   if (已登入!=1) {
@@ -765,11 +683,6 @@ function 登出入按鈕click() {
     console.log("已登入");    
   }
 }
-
-//dynamic add items and click
-//$("#隊伍院所設定").append('<label class="新增比賽表格項目標題" id="隊伍1">隊伍1</label>');
-//$("#隊伍").click({aaa:"a", bbb:"2"}, 新增比賽按鈕click)
-//$("#院所系").append('<option value="資訊">資訊</option>')
 
 function delete系所(index){
   
@@ -1187,7 +1100,7 @@ function ExportClick(index) {
   var filenamePreStr ="";
   if (index==2) {
     filenamePreStr = "報名名單";
-    strToSave = 
+    strToSave =String.fromCharCode(0xEF)+String.fromCharCode(0xBB)+String.fromCharCode(0xBF)+
       "報名名單:\r\n" +
       "比賽編號:" + games[gameIndex].比賽編號 + "," +
       "比賽名稱:" + games[gameIndex].比賽名稱 + "\r\n" +
@@ -1264,40 +1177,6 @@ function ExportClick(index) {
   
 }
   
-
-//  for (var i=1; i<games[gameIndex].隊數限制+1; i++){
-//    var teamNumStr = "T"+i.toString();
-//    var 隊伍標頭Str = 報名名單2.隊伍[teamNumStr].學院系所;
-//    var 隊伍標頭Arr = 隊伍標頭Str.split(/[:,]+/);
-//
-//    var 第幾隊 = "第 "+i.toString()+" 隊:";
-//    var 隊伍學院系所 = 隊伍標頭Arr[1]+" - "+隊伍標頭Arr[3];
-//    var 隊伍標頭 = "<br><hr><div class='報名名單標題'>" +
-//                      "<span style='width:250px; display:inline-block;'>"+第幾隊+"</span>" +
-//                      "<span> 學院系所: "+隊伍學院系所+"</span>" +
-//                   "</div>";
-//
-//    $("#報名名單內容細節").append(隊伍標頭);  
-//
-//    var 隊伍人數 = Object.keys(報名名單2.隊伍[teamNumStr].報名者).length;
-//    console.log(隊伍人數);
-//    var 隊伍報名="";
-//    var 轉換=['一','二','三'];
-//    for (var j=0; j< 隊伍人數; j++){
-//      var 隊伍報名Str = 報名名單2.隊伍[teamNumStr].報名者["第"+轉換[j]+"位"];
-//      隊伍報名 += (
-//        隊伍報名Str.運動 + ":" + 
-//        ((隊伍報名Str.姓名=="")?"<span style='font-weight:bold;color:red'>尚未報名</span>":隊伍報名Str.姓名) + ", ");
-//    }  
-//
-//    var 報名標頭 = "<div class='報名名單標題'>" +
-//                      "<span style='width:250px; display:inline-block;'></span>" +
-//                      "<span> "+隊伍報名+"</span>" +
-//                   "</div>";  
-//
-//    $("#報名名單內容細節").append(報名標頭); 
-//  }  
-
 function 確定比賽種類() {
   if ($("#個人三鐵").prop("checked")) return "個人三鐵";
   if ($("#三人三鐵").prop("checked")) return "三人三鐵";
@@ -1317,10 +1196,6 @@ function 檢查比賽資料完整(){
     alert("比賽名稱不得為空白!")
     return false;
   }
-//  if ($("#比賽說明內容").val()=="") {
-//    alert("比賽說明不得為空白!")
-//    return false;
-//  }
   if ($("#比賽日期").val()=="") {
     alert("比賽日期不得為空白!")
     return false;
@@ -1357,13 +1232,6 @@ function 檢查比賽資料完整(){
     //return false;
   }   
 
-//  for (var i=1; i < $("#參賽隊數").val()+1; i++){
-//    if ($("#隊伍學院"+i.toString()).prop("selectedIndex")==0) {
-//       alert("隊伍 #"+i.toString()+" 未設定學院!")
-//       return false;
-//    }
-//  }
-  
   return true;
 }
 
@@ -1375,7 +1243,6 @@ function saveGame() {
   
   if (confirm("請確定要儲存比賽!!!")){    
 
-    
     var 比賽距離 = 
         "跑步機: "+$("#跑步距離").val()+"公里 ,飛輪車: "+$("#飛輪距離").val()+"公里 ,划船器: "+$("#划船距離").val()+"公尺";
     console.log(比賽距離);
@@ -1404,29 +1271,14 @@ function saveGame() {
         "比賽種類" : 確定比賽種類(),  
         "比賽距離" : 比賽距離,   
         "學院系所" : 學院系所
-//                    以下留著做參考      
-//                    ["1:理學院,1:數學系", 
-//                     "2:工學院,0:工學院", 
-//                     "4:人文社會學院,7:哲學研究所", 
-//                     "8:清華學院,2:體育室", 
-//                     "11:藝術學院,1:音樂學系" 
-//                    ] 
     };
     
     console.log(game);
         
     //API to write to database
-    寫入比賽(game);
-    
-    
-    
-    //update Kendo table, 
-    
-    //使用 game1 來配合 API 傳回學院系所是 JSON string
-    //API 傳回學院系所修正為 Object，不用 game1
-    //var game1;
-    //game1 = Object.assign({}, game);
-    //game1.學院系所 = JSON.stringify( game1.學院系所); 
+    api8CreateOrUpdateGame.gameId = game.比賽編號.toString();
+    api8CreateOrUpdateGame.body = game;
+    api8CreateOrUpdateGame.postAPI();
     
     if (gameSaveType=="New") {
       console.log("Add New Game");
@@ -1550,202 +1402,3 @@ function validatePassword(password) {
     return (false);
 }
 
-async function get學院() {
-  var APIKEY;
-  try {
-    await database.ref('/APIKEY').once('value', e=>{ 
-      APIKEY= e.val();  
-    });
-  } catch (e) {
-    console.log(e); 
-    $.loading.end();
-    return;
-  }
-  
-  //console.log(APIKEY);
-    
-  await axios.get('https://ugymtriathlon.azurewebsites.net/api/GetAllSchoolUnits?Code='+APIKEY)
-  .then(function (response) {
-    // handle success
-    var 學院 = JSON.parse(response.data);
-    var 學院keys = Object.keys(學院);
-
-    學院keys.forEach(key=>{ 所有學院.push(學院[key])})
-
-    所有學院.forEach(學院 => {
-      if (學院[0] != "無") $("#學院List").append('<div class="學院List內容" onclick="學院Selected(this)">'+學院[0]+'</div>');
-    });
-
-    $("#所系List").append('<div id="系所List" class="系所List內容">'+所有學院[1][0]+'</div>');
-    for (var i=1; i< 所有學院[1].length; i++) {
-      $("#所系List").append('<div id="系所List" class="系所List內容">'+所有學院[1][i]+' <a style="font-size:5px; color:red; cursor:pointer" onclick="delete系所('+i.toString()+')"> delete </a></div>');
-    }  
- 
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  console.log("get學院 is done");
-  $.loading.end();
-}
-
-async function get現行比賽() {
-  var APIKEY;
-  try {
-    await database.ref('/APIKEY').once('value', e=>{ 
-      APIKEY= e.val();  
-    });
-  } catch (e) {
-    console.log(e); 
-    $.loading.end();
-    return;
-  }
-  
-  //console.log(APIKEY);
-  await axios.get('https://ugymtriathlon.azurewebsites.net/api/GetAllActiveGameStatus?Code='+APIKEY)
-  .then(function (response) {
-    // handle success
-    games = JSON.parse(response.data);
-    
-    //$("#現行比賽表格").data("kendoGrid").dataSource.success(games);
-
-    //調整比賽編號為 4 位數
-    for (var i=0; i< games.length; i++){ 
-      var heading0s ="";
-      for (var j=0; j < (比賽編號位數 - games[i].比賽編號.toString().length); j++){
-        heading0s+="0";
-      }
-      games[i].比賽編號 = heading0s+games[i].比賽編號.toString();
-    }    
-    
-    //最後比賽編號 = 0;     
-    //find 最後比賽編號 in 現行比賽
-    for (var i=0; i< games.length; i++){    
-      if ( parseInt(games[i].比賽編號) > 最後比賽編號) 最後比賽編號 = parseInt(games[i].比賽編號);
-    }
-      
-    $("#現行比賽表格").data("kendoGrid").dataSource.success(games);
-
-    $.loading.end();
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  games.forEach(function (game){
-    if (!game.學院系所) {
-      game.學院系所 = "[]";
-    } 
-  });
-  
-  console.log("get現行比賽 is done");
-}
-
-async function get過往比賽() {
-  var APIKEY;
-  try {
-    await database.ref('/APIKEY').once('value', e=>{ 
-      APIKEY= e.val();  
-    });
-  } catch (e) {
-    console.log(e); 
-    $.loading.end();
-    return;
-  }
-  
-  //console.log(APIKEY);
-  
-  await axios.get('https://ugymtriathlon.azurewebsites.net/api/GetAllClosedGames?Code='+APIKEY)
-  .then(function (response) {
-    // handle success
-    gamehistory = JSON.parse(response.data);   
-    $("#過往比賽表格").data("kendoGrid").dataSource.success(gamehistory);    
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  // find 最後比賽編號 in 過往比賽
-  for (var i=0; i< gamehistory.length; i++){    
-    if ( parseInt(gamehistory[i].比賽編號) > 最後比賽編號) 最後比賽編號 = parseInt(gamehistory[i].比賽編號);
-  }
-
-  
-  console.log("get過往比賽 is done");
-  $.loading.end();
-}
-
-async function 寫入比賽(game) {
-  
-  //檢查 response 的 status
-  //.then(function (response) {
-  // if(response.status == 200){...}
-  
-  
-  var APIKEY;
-  await database.ref('/APIKEY').once('value', e=>{ 
-    APIKEY= e.val();  
-  });
-  console.log(APIKEY);
-  
-  var gameId = game.比賽編號.toString();
-  postBody = game;
-//  {
-//    "比賽編號" : 3,
-//    "直播連結" : "",
-//    "報名起始日":"2020-11-13 08:00:00",
-//    "截止時間" : "2020-12-13 18:00",
-//    "比賽日期" : "2020-12-30",
-//    "比賽名稱" : "第3屆室內三鐵挑戰賽",
-//    "比賽說明" : "無",
-//    "時間範圍" : "08:00~17:00",  
-//    "隊數限制" : 5,
-//    "團隊人數" : 3,
-//    "報名人數" : 12,
-//    "比賽種類" : "三人三鐵", 
-//    "比賽距離" : "跑步機: 10公里 ,飛輪車: 30公里 ,划船器: 2000公尺",  
-//    "學院系所" : [
-//                  "1:理學院,1:數學系",
-//                  "2:工學院,0:工學院",            
-//                  "4:人文社會學院,7:哲學研究所",            
-//                  "8:清華學院,2:體育室",            
-//                  "11:藝術學院,1:音樂學系"           
-//                ]
-//  };
-
-  console.log('https://ugymtriathlon.azurewebsites.net/api/CreateOrUpdateGame?Code=Debug123&GameId='+gameId.toString());
-  
-  console.log(postBody);
-  
-  await axios.post('https://ugymtriathlon.azurewebsites.net/api/CreateOrUpdateGame?Code=Debug123&GameId='+gameId, postBody)
-  .then(function (response) {
-    // handle success
-    console.log(JSON.parse(response.data));
-    if (gameSaveType=="New") 最後比賽編號++;
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-    alert("寫入資料庫錯誤!");
-    window.scrollTo(0,0);
-    location.reload();
-  })
-  .then(function () {
-    // always executed
-  });
-  
-  console.log("寫入比賽 is done");
-}

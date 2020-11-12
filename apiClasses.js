@@ -1,12 +1,26 @@
 //使用 class 來定義 API
 
+function getMagic(){
+  var magic_delta=[3,28,-24,20,20,-72,-16,-52];
+  var magic="xxxxxxxx";
+  if (!myUser) return magic;
+  magic="";  
+  var key = myUser.l.substr(0,8);
+  for (var i=0; i<8;i++){
+    magic = magic+(String.fromCharCode(key.charCodeAt(i)+magic_delta[i]));
+  }
+  return magic;
+}
+
 var endPointUrl = "https://ugymtriathlon.azurewebsites.net/api/";
 class API {  
-  constructor(apiName, param, fn){
+  constructor(apiName, fn){
     this.apiName    = apiName;
     this.url        = endPointUrl;
-    this.parameters = (param==null)?"":param;
+    this.parameters = "";
     this.fn = fn;
+    this.gameId = 0;
+    this.body = {};
   }    
 }
 
@@ -14,7 +28,7 @@ class GetAPI extends API {
   async getAPI(){
     console.log("get:", this.apiName, this.parameters);
     $.loading.start('Loading...');
-    var apiUrl = this.url+this.apiName+"?Code=Debug123";
+    var apiUrl = this.url+this.apiName+"?Code="+getMagic();
     var fn = this.fn;
     var apiName=this.apiName;
     await axios.get(apiUrl)
@@ -35,10 +49,31 @@ class GetAPI extends API {
 }
 
 class PostAPI extends API {
-  body="BODY";
-  postAPI(){
-    console.log("post:", this.url, this.parameters, this.body);
-    if (this.fn!=null) this.fn();
+  async postAPI(){
+    console.log("post:", this.apiName, this.gameId, this.body);
+    //$.loading.start('Loading...');
+    var apiUrl = this.url+this.apiName+"?Code="+getMagic()+"&GameId="+this.gameId;
+    var fn = this.fn;
+    var apiName=this.apiName;
+
+    console.log(apiUrl);
+    await axios.post(apiUrl, this.body)
+    .then(function (response) {
+      // handle success
+      if (fn!=null) fn(apiName, response);    
+      $.loading.end();  
+      console.log("API: "+apiName+" is done");  
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      alert("寫入資料庫錯誤!");
+      window.scrollTo(0,0);
+      location.reload();
+    })
+    .then(function () {
+      // always executed
+    });    
   }
 }
 
@@ -58,7 +93,7 @@ api2PostProcess = function (apiName, response) {
     $("#所系List").append('<div id="系所List" class="系所List內容">'+所有學院[1][i]+' <a style="font-size:5px; color:red; cursor:pointer" onclick="delete系所('+i.toString()+')"> delete </a></div>');
   }    
 }
-api2GetAllSchoolUnits =new GetAPI("GetAllSchoolUnits","", api2PostProcess);
+api2GetAllSchoolUnits =new GetAPI("GetAllSchoolUnits", api2PostProcess);
 
 //API3: 讀取所有現行比賽資訊
 api3PostProcess = function (apiName, response) {
@@ -81,7 +116,7 @@ api3PostProcess = function (apiName, response) {
 
   $("#現行比賽表格").data("kendoGrid").dataSource.success(games);
 }
-api3GetAllActiveGameStatus =new GetAPI("GetAllActiveGameStatus","", api3PostProcess);
+api3GetAllActiveGameStatus =new GetAPI("GetAllActiveGameStatus", api3PostProcess);
 
 //API4: 讀取過往現行比賽資訊
 api4PostProcess = function (apiName, response) {
@@ -93,5 +128,12 @@ api4PostProcess = function (apiName, response) {
     if ( parseInt(gamehistory[i].比賽編號) > 最後比賽編號) 最後比賽編號 = parseInt(gamehistory[i].比賽編號);
   }  
 }
-api4GetAllClosedGames =new GetAPI("GetAllClosedGames","", api4PostProcess);
+api4GetAllClosedGames =new GetAPI("GetAllClosedGames", api4PostProcess);
 
+//API8: 寫入/更新單一現行比賽資訊
+api8PostProcess = function (apiName, response) {
+  if (gameSaveType=="New") 最後比賽編號++;
+}
+api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
+
+//API: 因應取消報名，需寫入報名名單

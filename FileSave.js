@@ -44,6 +44,7 @@
     }
 
     return blob;
+
   }
 
   function download(url, name, opts) {
