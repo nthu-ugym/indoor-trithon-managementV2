@@ -126,32 +126,3 @@ api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
 
 //API: 因應取消報名，需寫入報名名單
 
-
-//========== TEST
-var testStr =String.fromCharCode(0xEF)+String.fromCharCode(0xBB)+String.fromCharCode(0xBF);
-var testHandle;
-async function getNewFileHandle() {
-  const options = {
-    types: [
-      {
-        description: 'Text Files',
-        accept: {
-//          'text/plain': ['.txt'],
-          'application/octet-stream': ['.csv'],
-        },
-      },
-    ],
-  };
-  const handle = await window.showSaveFilePicker(options);
-  testHandle = handle;
-  return handle;
-}
-
-async function writeFile(fileHandle, contents) {
-  // Create a FileSystemWritableFileStream to write to.
-  const writable = await fileHandle.createWritable();
-  // Write the contents of the file to the stream.
-  await writable.write(contents);
-  // Close the file and write the contents to disk.
-  await writable.close();
-}
