@@ -21,6 +21,7 @@ var myUser;
 
 $(document).ready(function() {
 
+  $.loading.start('Loading...');
   initializaData();
   
   //Firebase authrization 狀態改變 callback
@@ -90,6 +91,7 @@ $(document).ready(function() {
 
     } else {
       console.log("No user is signed in.");
+      $.loading.end();
       已登入 = -1;
       登入Email = "";
       $("#登出入按鈕").text("登入");   
@@ -100,7 +102,6 @@ $(document).ready(function() {
   });  
     
   $(".回主畫面").hover(function() {$(this).css('cursor','pointer');});
-  
   $("#新增比賽表格Div").hide();
   $("#院所系管理表單Div").hide(); 
   $("#比賽資訊").css("background", "orange");$("#比賽資訊").css("color", "white");  
@@ -1097,10 +1098,11 @@ function ExportClick(index) {
     }
   }  
   
+  var magicHead = String.fromCharCode(65279);
   var filenamePreStr ="";
   if (index==2) {
     filenamePreStr = "報名名單";
-    strToSave =String.fromCharCode(0xEF)+String.fromCharCode(0xBB)+String.fromCharCode(0xBF)+
+    strToSave = magicHead +
       "報名名單:\r\n" +
       "比賽編號:" + games[gameIndex].比賽編號 + "," +
       "比賽名稱:" + games[gameIndex].比賽名稱 + "\r\n" +
@@ -1122,7 +1124,7 @@ function ExportClick(index) {
         var 隊伍報名="";
         for (var j=1; j< 隊伍人數+1; j++){
           var 隊伍報名Str = 報名名單.隊伍[teamNumStr].報名者["No"+j.toString()];
-          console.log(隊伍報名Str);
+          //console.log(隊伍報名Str);
           隊伍報名 += (
              "," + 隊伍報名Str.運動 + ":" + 
             ((隊伍報名Str.姓名=="")?"尚未報名":隊伍報名Str.姓名));
@@ -1135,7 +1137,7 @@ function ExportClick(index) {
   
   if (index==3) {
     filenamePreStr = "比賽結果";  
-    strToSave = 
+    strToSave = magicHead +
       "比賽結果:\r\n" +
       "比賽編號:" + games[gameIndex].比賽編號 + "," +
       "比賽名稱:" + games[gameIndex].比賽名稱 + "\r\n" +
@@ -1162,7 +1164,7 @@ function ExportClick(index) {
         var 隊伍報名="";
         for (var j=1; j< 隊伍人數+1; j++){
           var 隊伍報名Str = 比賽結果.隊伍[teamNumStr].報名者["No"+j.toString()];
-          console.log(隊伍報名Str);
+          //console.log(隊伍報名Str);
           隊伍報名 += (
              "," + 隊伍報名Str.運動 + ":" + 
             ((隊伍報名Str.姓名=="")?"尚未報名":隊伍報名Str.姓名) + "," + 隊伍報名Str.成績);
@@ -1173,7 +1175,7 @@ function ExportClick(index) {
   }
 
   var blob = new Blob([strToSave], {type: "text/plain;charset=utf-8"});
-  saveAs(blob, filenamePreStr+"_export.csv")
+  saveAs(blob, filenamePreStr+"_export.csv");
   
 }
   

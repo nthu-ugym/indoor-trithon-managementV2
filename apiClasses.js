@@ -1,17 +1,5 @@
 //使用 class 來定義 API
 
-function getMagic(){
-  var magic_delta=[3,28,-24,20,20,-72,-16,-52];
-  var magic="xxxxxxxx";
-  if (!myUser) return magic;
-  magic="";  
-  var key = myUser.l.substr(0,8);
-  for (var i=0; i<8;i++){
-    magic = magic+(String.fromCharCode(key.charCodeAt(i)+magic_delta[i]));
-  }
-  return magic;
-}
-
 var endPointUrl = "https://ugymtriathlon.azurewebsites.net/api/";
 class API {  
   constructor(apiName, fn){
@@ -137,3 +125,33 @@ api8PostProcess = function (apiName, response) {
 api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
 
 //API: 因應取消報名，需寫入報名名單
+
+
+//========== TEST
+var testStr =String.fromCharCode(0xEF)+String.fromCharCode(0xBB)+String.fromCharCode(0xBF);
+var testHandle;
+async function getNewFileHandle() {
+  const options = {
+    types: [
+      {
+        description: 'Text Files',
+        accept: {
+//          'text/plain': ['.txt'],
+          'application/octet-stream': ['.csv'],
+        },
+      },
+    ],
+  };
+  const handle = await window.showSaveFilePicker(options);
+  testHandle = handle;
+  return handle;
+}
+
+async function writeFile(fileHandle, contents) {
+  // Create a FileSystemWritableFileStream to write to.
+  const writable = await fileHandle.createWritable();
+  // Write the contents of the file to the stream.
+  await writable.write(contents);
+  // Close the file and write the contents to disk.
+  await writable.close();
+}
