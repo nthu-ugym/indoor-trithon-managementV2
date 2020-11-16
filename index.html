@@ -26,18 +26,18 @@
   
   <script src="FileSave.js"></script>
     
-  <!--Database 資料先用 JS 檔-->
+  <!--Database 模擬資料 JS 檔-->
   <script src="./模擬資料.js"></script>
   <!--  <script src="./過往比賽.js"></script>  -->
   <!--  <script src="./院系.js"></script>-->
-      
-    
-      
+             
 </head>
 <body>
  
+  <!-- 使用 Firebase UI login 的 div -->
   <div id = "loginDiv" style="display:none"></div>
   
+  <!-- 帳號管理 的 div -->  
   <div id = "createAccountDiv" style="margin-left:30px;display:none">
     <a style="font-size:30px; font-weight:bold;"><i style="color: dimgray" class="fa fa-user"></i> 帳號管理</a><br><hr>  
     <label class="新增比賽表格項目標題">新增帳號 Email:</label>
@@ -86,9 +86,9 @@
       <div id="過往比賽表格"></div>
     </div>
   </div>
-<!--  主頁面結束-->
+  <!--  主頁面結束-->
  
-<!--新增比賽表格-->
+  <!--新增比賽表格-->
   <div id="新增比賽表格Div" style="margin-left:30px">
     <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i> 回主畫面</h2>   
     <h1 id="新增比賽表格header">新增比賽</h1>
@@ -259,10 +259,9 @@
   <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i> 回主畫面</h2>
   
 </div>
-
-<!--新增比賽表格結束--> 
+  <!--新增比賽表格結束--> 
   
-<!--院所系管理表單-->
+  <!--院所系管理表單-->
   <div id="院所系管理表單Div" style="margin-left:30px">
     <h2 class="回主畫面" style="color:blue" onclick="回主畫面()"><i style="color:blue" class="fa fa-chevron-left"></i>回主畫面</h2>     
     <h1 id="院所系管理表單header"><i style="color: dimgray" class="fa fa-list-alt"></i> 院所系管理表單</h1>
@@ -286,9 +285,7 @@
     </div>
 
   </div>  
-
-
-<!--院所系管理表單結束-->  
+  <!--院所系管理表單結束-->  
   
   <style>
     .新增比賽表格項目標題 {
@@ -343,7 +340,8 @@
     }
     
   </style> 
-  <script src="functions.js"></script>   
+  <script src="main.js"></script>   
+  <script src="functions.js"></script>
   <script src="delta.js"></script>   
   <script src="apiClasses.js"></script>   
 
