@@ -85,7 +85,8 @@ api2GetAllSchoolUnits =new GetAPI("GetAllSchoolUnits", api2PostProcess);
 
 //API3: 讀取所有現行比賽資訊
 api3PostProcess = function (apiName, response) {
-  games = JSON.parse(response.data);
+//  games = JSON.parse(response.data);
+  games = response.data;
 
   //調整比賽編號為 4 位數
   for (var i=0; i< games.length; i++){ 

@@ -1083,6 +1083,7 @@ function saveGame() {
     //API to write to database
     api8CreateOrUpdateGame.gameId = game.比賽編號.toString();
     api8CreateOrUpdateGame.body = game;
+    console.log(game);
     api8CreateOrUpdateGame.postAPI();
     
     if (gameSaveType=="New") {
