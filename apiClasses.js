@@ -119,11 +119,10 @@ api4PostProcess = function (apiName, response) {
 }
 api4GetAllClosedGames =new GetAPI("GetAllClosedGames", api4PostProcess);
 
-//API8: 寫入/更新單一現行比賽資訊
+//API8: 寫入/更新單一現行比賽資訊，使用必須設定 body for post
 api8PostProcess = function (apiName, response) {
   if (gameSaveType=="New") 最後比賽編號++;
 }
 api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
 
-//API: 因應取消報名，需寫入報名名單
 
