@@ -1,6 +1,6 @@
-
-//=== Initialization Data =====================
+//定義 Kendo UI table 
 function initializaData(){
+  
   //比賽表格的 schema 定義
   schemaModel = {
         fields: {
@@ -209,8 +209,11 @@ function initializaData(){
   ];    
 }
 
+//比賽編輯時，因應選擇不同的學院，更改顯示 系所 的畫面
+//使用 jQuery remove/append 來做動態項目顯示
 function 更改學院(selectObject){
-  console.log(selectObject.name, selectObject.selectedIndex, selectObject.id);
+  
+  console.log("更改學院", selectObject.name, selectObject.selectedIndex, selectObject.id);
   
   var 學院Idx   = selectObject.selectedIndex;
   var 隊伍學院id = selectObject.id;
@@ -219,6 +222,7 @@ function 更改學院(selectObject){
   
   console.log(隊伍系所id, 隊伍號碼);
   
+  //重建 系所 的選項
   $("#系所Option"+隊伍號碼).remove();
   
   所有學院[學院Idx].forEach(系所 => {
@@ -227,6 +231,8 @@ function 更改學院(selectObject){
    
 }
 
+//院所系管理表單，當選擇不同學院，顯示其所屬系所
+//使用 jQuery remove/append 來做動態項目顯示
 function 學院Selected(學院){
   console.log("學院Selected", 學院.textContent);
   $("#清華大學系所").text(學院.textContent);
@@ -241,9 +247,7 @@ function 學院Selected(學院){
   }
   
   $("#系所List").remove();
-//  所有學院[學院Idx].forEach(系所 => {
-//    $("#所系List").append('<div id="系所List" class="系所List內容">'+系所+'</div>');       
-//  }); 
+ 
   $("#所系List").append('<div id="系所List" class="系所List內容">'+所有學院[學院Idx][0]+'</div>');
   for (var i=1; i< 所有學院[1].length; i++) {
     $("#所系List").append('<div id="系所List" class="系所List內容">'+所有學院[學院Idx][i]+' <a style="font-size:5px; color:red; cursor:pointer" onclick="delete系所('+i.toString()+')"> delete </a></div>');
@@ -251,6 +255,8 @@ function 學院Selected(學院){
   
 }
 
+//回歸主畫面
+//使用 hide/show 和 window.scrollTo 來顯示主畫面
 function 回主畫面(){
   console.log("回主畫面");
   $("#新增比賽表格Div").hide();
@@ -488,6 +494,7 @@ function 登出入按鈕click() {
   }
 }
 
+//dele 系所 handler，未完成
 function delete系所(index){
   
   var 系所名 = $("#清華大學系所").text();
