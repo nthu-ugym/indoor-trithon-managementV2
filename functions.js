@@ -750,6 +750,11 @@ function 院所系管理按鈕click(){
   $("#院所系管理表單Div").show(); 
 }
 
+function 郵件報名按鈕click() {
+  console.log("郵件報名按鈕click");
+  window.open("https://ugymtriathlon.azurewebsites.net/web/getlink.aspx");
+}
+
 function 帳號管理按鈕click() {
   console.log("帳號管理按鈕click");
   if (!in管理帳號) {

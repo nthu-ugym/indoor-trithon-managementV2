@@ -3,6 +3,7 @@ $("#版本").text("V2.00");
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
 var 登入Email="";
+$("#郵件報名按鈕").prop("disabled","disabled");
 $("#帳號管理按鈕").prop("disabled","disabled");
 $("#院所系管理按鈕").prop("disabled","disabled");
 var 最後比賽編號 = 0;; 
@@ -77,11 +78,13 @@ $(document).ready(function() {
         $("#登出入訊息").text("歡迎 "+登入Email);   
 
         if (登入Email=="superadmin@test.com"){
+          $("#郵件報名按鈕").prop("disabled",""); 
           $("#帳號管理按鈕").prop("disabled","");    
           $("#院所系管理按鈕").prop("disabled","");       
         } else {  
-            $("#帳號管理按鈕").prop("disabled","disabled");    
-            $("#院所系管理按鈕").prop("disabled","disabled");         
+          $("#郵件報名按鈕").prop("disabled","disabled"); 
+          $("#帳號管理按鈕").prop("disabled","disabled");    
+          $("#院所系管理按鈕").prop("disabled","disabled");         
         }
         
         //Use API to get 現行比賽
@@ -101,7 +104,8 @@ $(document).ready(function() {
       已登入 = -1;
       登入Email = "";
       $("#登出入按鈕").text("登入");   
-      $("#登出入訊息").text("請登入進行管理比賽");     
+      $("#登出入訊息").text("請登入進行管理比賽"); 
+      $("#郵件報名按鈕").prop("disabled","disabled");       
       $("#帳號管理按鈕").prop("disabled","disabled");    
       $("#院所系管理按鈕").prop("disabled","disabled");      
     }
