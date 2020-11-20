@@ -124,9 +124,9 @@ $(document).ready(function() {
       schema: {
         model: schemaModel
       },
-      pageSize: 20
+      pageSize: 5
     },
-    height: 500,
+    height: 600,
     toolbar: ["search"],
     scrollable: true,
     sortable: true,
@@ -146,9 +146,9 @@ $(document).ready(function() {
       schema: {
         model: schemaModel
       },
-      pageSize: 20
+      pageSize: 4
     },
-    height: 400,
+    height: 420,
     toolbar: ["search"],
     scrollable: true,
     sortable: true,

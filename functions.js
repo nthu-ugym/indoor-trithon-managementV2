@@ -1,4 +1,16 @@
 //定義 Kendo UI table 
+function render中英文比賽名稱(model) {
+  var text = model.比賽名稱+ "\n" +model.英文比賽名稱;
+  text = text.replace(new RegExp("\n", 'g'), "<br>");
+  return text;
+}
+
+function render中英文比賽地點(model) {
+  var text = model.比賽地點+ "\n" +model.英文比賽地點;
+  text = text.replace(new RegExp("\n", 'g'), "<br>");
+  return text;
+}
+
 function initializaData(){
   
   //比賽表格的 schema 定義
@@ -7,6 +19,7 @@ function initializaData(){
           比賽編號: { type: "string" },        
           比賽日期: { type: "string" },
           比賽名稱: { type: "string" },
+          比賽地點: { type: "string" },          
           時間範圍: { type: "string" },
           截止時間: { type: "string" },            
           隊數限制: { type: "number" },
@@ -26,9 +39,14 @@ function initializaData(){
     },  
     {
       field: "比賽名稱",
-      //template: "<div><a> #: 比賽名稱 # </a><br>aaa</div>",
+      template: render中英文比賽名稱,
       //width: "230px"
     },  
+    {
+      field: "比賽地點",
+      template: render中英文比賽地點,
+      width: "100px"
+    },     
     {
       field: "比賽日期",
       //format: "{0:MM/dd/yyyy}",
@@ -90,9 +108,14 @@ function initializaData(){
     },  
     {
       field: "比賽名稱",
-      //template: "<div><a> #: 比賽名稱 # </a><br>aaa</div>",
+      template: render中英文比賽名稱,
       //width: "230px"
     },  
+    {
+      field: "比賽地點",
+      template: render中英文比賽地點,      
+      width: "100px"
+    },     
     {
       field: "比賽日期",
       //format: "{0:MM/dd/yyyy}",
@@ -289,8 +312,13 @@ function editClick(e) {
   console.log(selectedGame);
   比賽編號 = parseInt(selectedGame.比賽編號);
   $("#比賽編號內容").text(比賽編號.toString());
+  $("#直播連結內容").val(selectedGame.直播連結);
   $("#比賽名稱內容").text(selectedGame.比賽名稱);
+  $("#英文比賽名稱內容").text(selectedGame.英文比賽名稱);
   $("#比賽說明內容").text(selectedGame.比賽說明);
+  $("#英文比賽說明內容").text(selectedGame.英文比賽說明);
+  $("#比賽地點內容").val(selectedGame.比賽地點);  
+  $("#英文比賽地點內容").val(selectedGame.英文比賽地點);  
   $("#比賽日期").val(selectedGame.比賽日期);
   var 時間範圍 = selectedGame.時間範圍; 
   var 開始結束 = 時間範圍.split("~");
@@ -389,7 +417,10 @@ function 直播link(e) {
   
   console.log(selectedGame);
   
-  //TODO: call API to save the selectedGame.
+  //API to write to database, repeated with the code in saveGame()
+  api8CreateOrUpdateGame.gameId = selectedGame.比賽編號.toString();
+  api8CreateOrUpdateGame.body = selectedGame;
+  api8CreateOrUpdateGame.postAPI();  
 }
 
 //過往比賽的 Info 按鈕 handler
@@ -410,8 +441,13 @@ function infoClick(e) {
   console.log(selectedGame);
   比賽編號 = selectedGame.比賽編號;
   $("#比賽編號內容").text(比賽編號.toString());
-  $("#比賽名稱內容").text(selectedGame.比賽名稱); //$("#比賽名稱內容").prop('disabled', true);
-  $("#比賽說明內容").text(selectedGame.比賽說明); //$("#比賽說明內容").prop('disabled', true);
+  $("#直播連結內容").val(selectedGame.直播連結);
+  $("#比賽名稱內容").text(selectedGame.比賽名稱);
+  $("#英文比賽名稱內容").text(selectedGame.英文比賽名稱);
+  $("#比賽說明內容").text(selectedGame.比賽說明);
+  $("#英文比賽說明內容").text(selectedGame.英文比賽說明);
+  $("#比賽地點內容").val(selectedGame.比賽地點);  
+  $("#英文比賽地點內容").val(selectedGame.英文比賽地點); 
   $("#比賽日期").val(selectedGame.比賽日期);     //$("#比賽日期").prop('disabled', true);
   var 時間範圍 = selectedGame.時間範圍; 
   var 開始結束 = 時間範圍.split("~");
@@ -534,8 +570,13 @@ function 新增比賽按鈕click(){
   $("#比賽結果").prop("disabled", true);
   
   $("#比賽編號內容").text((最後比賽編號+1).toString());
-  $("#比賽名稱內容").text(""); 
-  $("#比賽說明內容").text(""); 
+  $("#直播連結內容").val(selectedGame.直播連結);
+  $("#比賽名稱內容").text(selectedGame.比賽名稱);
+  $("#英文比賽名稱內容").text(selectedGame.英文比賽名稱);
+  $("#比賽說明內容").text(selectedGame.比賽說明);
+  $("#英文比賽說明內容").text(selectedGame.英文比賽說明);
+  $("#比賽地點內容").val(selectedGame.比賽地點);  
+  $("#英文比賽地點內容").val(selectedGame.英文比賽地點); 
   $("#比賽日期").val("");    
   $("#開始時間").val(""); 
   $("#結束時間").val(""); 
@@ -1077,10 +1118,15 @@ function saveGame() {
     
     var game = {
         "比賽編號" : $("#比賽編號內容").text(),     
-        "直播連結" : "",    
+        "直播連結" : $("#直播連結內容").val(),
         "比賽日期" : $("#比賽日期").val(), 
         "比賽名稱" : $("#比賽名稱內容").val(), 
+        "英文比賽名稱" : $("#英文比賽名稱內容").val(), 
         "比賽說明" : $("#比賽說明內容").val(), 
+      
+        "英文比賽說明" : $("#英文比賽說明內容").val(),       
+        "比賽地點" : $("#比賽地點內容").val(), 
+        "英文比賽地點" : $("#英文比賽地點內容").val(), 
         "時間範圍" : $("#開始時間").val()+"~"+$("#結束時間").val(), 
         "截止時間" : $("#截止日期").val()+" "+$("#截止時間").val(), 
         "隊數限制" : $("#參賽隊數").val(), 

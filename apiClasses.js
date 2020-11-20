@@ -94,6 +94,17 @@ api3PostProcess = function (apiName, response) {
       heading0s+="0";
     }
     games[i].比賽編號 = heading0s+games[i].比賽編號.toString();
+    
+    //for Test
+    if (games[i].英文比賽名稱 == "")        games[i].英文比賽名稱 = "Empty";
+    if (games[i].英文比賽名稱 == undefined) games[i].英文比賽名稱 = "API not working";
+    if (games[i].英文比賽說明 == "")        games[i].英文比賽說明 = "Empty";
+    if (games[i].英文比賽說明 == undefined) games[i].英文比賽說明 = "API not working";
+
+    if (games[i].比賽地點 == "")        games[i].比賽地點 = "Empty";
+    if (games[i].比賽地點 == undefined) games[i].比賽地點 = "API not working";      
+    if (games[i].英文比賽地點 == "")        games[i].英文比賽地點 = "Empty";
+    if (games[i].英文比賽地點 == undefined) games[i].英文比賽地點 = "API not working";      
   }    
 
   //最後比賽編號 = 0;     
