@@ -120,12 +120,24 @@ api3GetAllActiveGameStatus =new GetAPI("GetAllActiveGameStatus", api3PostProcess
 //API4: 讀取過往現行比賽資訊
 api4PostProcess = function (apiName, response) {
   gamehistory = JSON.parse(response.data);   
-  $("#過往比賽表格").data("kendoGrid").dataSource.success(gamehistory); 
+  
+  //調整比賽編號為 4 位數
+  for (var i=0; i< gamehistory.length; i++){ 
+    var heading0s ="";
+    for (var j=0; j < (比賽編號位數 - gamehistory[i].比賽編號.toString().length); j++){
+      heading0s+="0";
+    }
+    gamehistory[i].比賽編號 = heading0s+gamehistory[i].比賽編號.toString();
+       
+  } 
   
   // find 最後比賽編號 in 過往比賽
   for (var i=0; i< gamehistory.length; i++){    
     if ( parseInt(gamehistory[i].比賽編號) > 最後比賽編號) 最後比賽編號 = parseInt(gamehistory[i].比賽編號);
   }  
+  
+  $("#過往比賽表格").data("kendoGrid").dataSource.success(gamehistory); 
+  
 }
 api4GetAllClosedGames =new GetAPI("GetAllClosedGames", api4PostProcess);
 
