@@ -19,11 +19,12 @@ var 隊數;
 var 原先隊數;
 var 比賽編號位數=5;
 var myUser;
+var 報名名單;
 
 $(document).ready(function() {
 
   $.loading.start('Loading...');
-  initializaData();  //defined in functions.js
+  initializaTable();  //defined in functions.js
   
   //Firebase authrization 狀態改變 callback
   firebase.auth().onAuthStateChanged(async function(user) {

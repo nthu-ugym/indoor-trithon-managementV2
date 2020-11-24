@@ -16,7 +16,7 @@ class GetAPI extends API {
   async getAPI(){
     console.log("get:", this.apiName, this.parameters);
     $.loading.start('Loading...');
-    var apiUrl = this.url+this.apiName+"?Code="+getMagic();
+    var apiUrl = this.url+this.apiName+"?Code="+getMagic()+"&gameId="+this.gameId.toString();
     var fn = this.fn;
     var apiName=this.apiName;
     await axios.get(apiUrl)
@@ -128,6 +128,20 @@ api4PostProcess = function (apiName, response) {
   }  
 }
 api4GetAllClosedGames =new GetAPI("GetAllClosedGames", api4PostProcess);
+
+//API6: 讀取單一比賽報名資料
+api6PostProcess = function (apiName, response) {
+  報名名單 = JSON.parse(response.data);   
+  console.log(報名名單);
+}
+api6GetSignUpByGameId =new GetAPI("GetSignUpByGameId", api6PostProcess);
+
+//API7: 讀取單一比賽結果
+api7PostProcess = function (apiName, response) {
+  比賽結果 = JSON.parse(response.data);   
+  console.log(比賽結果);
+}
+api7GetGameResults =new GetAPI("GetGameResults", api7PostProcess);
 
 //API8: 寫入/更新單一現行比賽資訊，使用必須設定 body for post
 api8PostProcess = function (apiName, response) {
