@@ -571,16 +571,18 @@ function 新增比賽按鈕click(){
   $("#比賽結果").prop("disabled", true);
   
   $("#比賽編號內容").text((最後比賽編號+1).toString());
-  $("#直播連結內容").val(selectedGame.直播連結);
-  $("#比賽名稱內容").text(selectedGame.比賽名稱);
-  $("#英文比賽名稱內容").text(selectedGame.英文比賽名稱);
-  $("#比賽說明內容").text(selectedGame.比賽說明);
-  $("#英文比賽說明內容").text(selectedGame.英文比賽說明);
-  $("#比賽地點內容").val(selectedGame.比賽地點);  
-  $("#英文比賽地點內容").val(selectedGame.英文比賽地點); 
+  $("#直播連結內容").val("");
+  $("#比賽名稱內容").text("");
+  $("#英文比賽名稱內容").text("");
+  $("#比賽說明內容").text("");
+  $("#英文比賽說明內容").text("");
+  $("#比賽地點內容").val("");  
+  $("#英文比賽地點內容").val(""); 
   $("#比賽日期").val("");    
   $("#開始時間").val(""); 
   $("#結束時間").val(""); 
+  $("#截止日期").val(""); 
+  $("#截止時間").val("");   
   $("#參賽隊數").val("10"); 原先隊數=10;
   $("#個人三鐵").prop("checked", "checked");  
   $("#跑步距離").val("");  $("#飛輪距離").val("");  $("#划船距離").val("");
@@ -970,7 +972,7 @@ function ExportClick(index) {
   for (var i=0; i< games.length; i++){
     if (games[i].比賽編號 == 比賽編號) {
       gameIndex = i;
-      exportGame = game[i];
+      exportGame = games[i];
       break;
     }
   }  
