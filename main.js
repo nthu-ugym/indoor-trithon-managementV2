@@ -1,4 +1,4 @@
-$("#版本").text("V2.02");
+$("#版本").text("V2.03");
 
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
@@ -125,7 +125,7 @@ $(document).ready(function() {
       schema: {
         model: schemaModel
       },
-      pageSize: 5
+      pageSize: 7
     },
     height: 600,
     toolbar: ["search"],

@@ -166,7 +166,7 @@ function initializaTable(){
     {
       field: "比賽名稱",
       title: " ",
-      template: "<div onclick='infoClick(this)'><i style='font-size:20px' class='fa fa-trash-o'></i></div>",
+      template: "<div onclick='deleteGame(this)'><i style='font-size:20px' class='fa fa-trash-o'></i></div>",
       width:"50px",        
     }
   ];
@@ -504,6 +504,22 @@ function infoClick(e) {
   $("#報名名單").prop("disabled", false);
   $("#比賽結果").prop("disabled", false);  
   比賽資訊click();  //顯示 新增比賽/編輯比賽 資訊頁面，並設定 目前比賽頁面 = 1
+  
+}
+
+//過往比賽的 trash handler
+function deleteGame(e) {
+  console.log("delete Game");
+  
+  var 過往比賽表格 = $("#過往比賽表格").data("kendoGrid");
+  var dataItem = 過往比賽表格.dataItem($(e).closest("tr"));
+  
+  if (confirm("確定要刪除比賽編號: " + dataItem.比賽編號)) {
+    api14RemoveGame.比賽編號 = dataItem.比賽編號;
+    api14RemoveGame.gameId = parseInt(dataItem.比賽編號);
+    console.log(api14RemoveGame.比賽編號, api14RemoveGame.gameId);  
+    api14RemoveGame.getAPI();
+  }
   
 }
 

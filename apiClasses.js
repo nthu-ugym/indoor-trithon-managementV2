@@ -8,6 +8,7 @@ class API {
     this.parameters = "";
     this.fn = fn;
     this.gameId = 0;
+    this.比賽編號="";
     this.body = {};
   }    
 }
@@ -161,4 +162,20 @@ api8PostProcess = function (apiName, response) {
 }
 api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
 
-
+//API14: 刪除比賽
+api14PostProcess = function (apiName, response) { 
+  console.log(response.data);  
+  if (response.data =="Ok") {
+    console.log("OK1 ", api14RemoveGame.比賽編號);
+    for (var i=0; i< gamehistory.length; i++){
+      if (gamehistory[i].比賽編號 == api14RemoveGame.比賽編號) {
+        gamehistory.splice(i,1);
+        $("#過往比賽表格").data("kendoGrid").dataSource.success(gamehistory);
+        break;
+      }
+    }   
+  } else {
+    alert("比賽刪除失敗");
+  }
+}
+api14RemoveGame =new GetAPI("RemoveGame", api14PostProcess);
