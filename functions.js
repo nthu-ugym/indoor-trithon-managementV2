@@ -974,13 +974,24 @@ function remove隊伍院系所(){
   }  
   
 }
-  
+
+function prepareExportHeader(exportGame){
+  return  "報名名單:\r\n" +
+          "比賽編號:" + exportGame.比賽編號 + "\r\n" +
+          "比賽名稱:" + exportGame.比賽名稱 + " " +
+          "比賽名稱(英):" + exportGame.英文比賽名稱 + "\r\n" +      
+          "比賽說明:" + exportGame.比賽說明 + " " +
+          "比賽說明(英):" + exportGame.英文比賽說明 + "\r\n" +      
+          "比賽日期:" + exportGame.比賽日期 + "\r\n" +    
+          "比賽時間:" + exportGame.時間範圍 + "\r\n" +          
+          "比賽地點:" + exportGame.比賽地點 + " " +      
+          "比賽地點(英):" + exportGame.英文比賽地點 + "\r\n" +        
+          "比賽種類:" + exportGame.比賽種類 + "\r\n" +
+          "比賽隊數:" + exportGame.隊數限制 + "\r\n";
+}
+
 function ExportClick(index) {
   console.log("Export", index);
-  
-  //TODO: API 用 比賽編號 get 報名名單，先用模擬資料
-  //var 報名名單 = Object.assign({}, 報名名單2);
-  //var 比賽結果 = Object.assign({}, 比賽結果2);
   
   var exportGame;
   //get the index of the game
@@ -1007,12 +1018,8 @@ function ExportClick(index) {
   var filenamePreStr ="";
   if (index==2) {
     filenamePreStr = "報名名單";
-    strToSave = magicHead +
-      "報名名單:\r\n" +
-      "比賽編號:" + exportGame.比賽編號 + "," +
-      "比賽名稱:" + exportGame.比賽名稱 + "\r\n" +
-      "比賽種類:" + exportGame.比賽種類 + "," +
-      "比賽隊數:" + exportGame.隊數限制 + "\r\n";
+    strToSave = magicHead + prepareExportHeader(exportGame);
+
 
     //for (var i=1; i<exportGame.隊數限制+1; i++){
     for (var i=1; i<Object.keys(報名名單.隊伍).length+1; i++){
@@ -1044,12 +1051,7 @@ function ExportClick(index) {
   
   if (index==3) {
     filenamePreStr = "比賽結果";  
-    strToSave = magicHead +
-      "比賽結果:\r\n" +
-      "比賽編號:" + exportGame.比賽編號 + "," +
-      "比賽名稱:" + exportGame.比賽名稱 + "\r\n" +
-      "比賽種類:" + exportGame.比賽種類 + "," +
-      "比賽隊數:" + exportGame.隊數限制 + "\r\n" +
+    strToSave = magicHead + prepareExportHeader(exportGame) +
       "比賽名次:\r\n" +
       "第一名:"+比賽結果.第一名.隊伍+",學院系所:"+比賽結果.第一名.學院系所+",成績:"+比賽結果.第一名.成績+ "\r\n" + 
       "第二名:"+比賽結果.第二名.隊伍+",學院系所:"+比賽結果.第二名.學院系所+",成績:"+比賽結果.第二名.成績+ "\r\n" +
