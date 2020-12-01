@@ -666,7 +666,8 @@ function 報名名單click(){
     $("#報名名單比賽名稱內容").text(比賽名稱);    
     
     console.log("報名名單", gameIndex);
-    var selectedGame報名名單 =[];
+    //改成 gloable var selectedGame報名名單 =[];
+    selectedGame報名名單 =[];
 
     //for (var i=1; i<games[gameIndex].隊數限制+1; i++){
     for (var i=1; i<Object.keys(報名名單.隊伍).length+1; i++){
