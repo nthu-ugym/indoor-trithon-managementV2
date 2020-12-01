@@ -623,6 +623,7 @@ function 比賽資訊click(){
   $("#比賽結果Div").hide();  
   $("#比賽結果").css("background", "");$("#比賽結果").css("color", "black"); 
   目前比賽頁面 = 1;
+  window.scrollTo(0,0);
 }
 
 function 報名名單click(){
@@ -651,7 +652,7 @@ function 報名名單click(){
       }
     }
     
-    if (gameIndex = -1){
+    if (gameIndex == -1){
       for (var i=0; i< gamehistory.length; i++){
         if (gamehistory[i].比賽編號 == 比賽編號) {
           gameIndex = i;
@@ -720,6 +721,47 @@ function 取消報名(e){
   var 報名名單表格 = $("#報名名單表格").data("kendoGrid");
   var dataItem = 報名名單表格.dataItem($(e).closest("tr"));
   console.log(dataItem.隊伍Id);
+  
+  var teamNumStr = dataItem.隊伍Id.toString()
+  var 取消隊伍 = 報名名單.隊伍["T"+ teamNumStr];
+  
+  console.log(報名名單.比賽編號, 取消隊伍, Object.keys(取消隊伍.報名者).length, teamNumStr);
+  
+  if (Object.keys(取消隊伍.報名者).length ==0 ) {
+    alert("沒有報名者可取消!"); 
+  } else {
+    if (confirm("確定要取消第"+teamNumStr+"隊報名者?")){
+      console.log("取消報名第"+teamNumStr+"隊報名者", 報名名單);
+      //var postBody = Object.assign({}, 報名名單);
+      
+      //本來用 for..loop，但其中 delete item 後，i 的順序就不對了。
+      Object.keys(報名名單.隊伍).forEach( function(team){
+        if (team != "T"+ teamNumStr){
+          console.log("Not match "+"T"+ teamNumStr, "delete ", team);
+          delete 報名名單.隊伍[team];     
+        }
+      });
+      
+      console.log(報名名單);
+      
+      //API9
+      api9CancelSignUp.gameId = 報名名單.比賽編號;
+      api9CancelSignUp.body = 報名名單;
+      api9CancelSignUp.postAPI();  
+      
+      
+      //Update Kendo grid
+      for (var i=0; i < selectedGame報名名單.length; i++ ){
+        if (selectedGame報名名單[i].隊伍Id == dataItem.隊伍Id) {
+          if (selectedGame報名名單[i].No1 != undefined) delete selectedGame報名名單[i].No1;
+          if (selectedGame報名名單[i].No2 != undefined) delete selectedGame報名名單[i].No2;
+          if (selectedGame報名名單[i].No3 != undefined) delete selectedGame報名名單[i].No3;
+          break;
+        }
+      }
+      $("#報名名單表格").data("kendoGrid").dataSource.success(selectedGame報名名單);              
+    }
+  }
 }
 
 function 隊伍轉換(名次){

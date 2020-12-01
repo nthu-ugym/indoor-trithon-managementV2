@@ -162,6 +162,12 @@ api8PostProcess = function (apiName, response) {
 }
 api8CreateOrUpdateGame =new PostAPI("CreateOrUpdateGame", api8PostProcess);
 
+//API9: 取消單一現行比賽報名資料
+api9後處理 = function (apiName, response) {
+  console.log("API9 result:", response);
+}
+api9CancelSignUp =new PostAPI("CancelSignUp", api9後處理);
+
 //API14: 刪除比賽
 api14PostProcess = function (apiName, response) { 
   console.log(response.data);  

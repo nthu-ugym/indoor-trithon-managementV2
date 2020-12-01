@@ -1,4 +1,4 @@
-$("#版本").text("V2.04");
+$("#版本").text("V2.05");
 
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
@@ -20,6 +20,7 @@ var 原先隊數;
 var 比賽編號位數=5;
 var myUser;
 var 報名名單;
+var selectedGame報名名單 =[];
 
 $(document).ready(function() {
 
