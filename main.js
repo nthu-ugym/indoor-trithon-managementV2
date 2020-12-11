@@ -1,4 +1,4 @@
-$("#版本").text("V2.05");
+$("#版本").text("V2.10"); //version
 
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
@@ -84,7 +84,7 @@ $(document).ready(function() {
           $("#帳號管理按鈕").prop("disabled","");    
           $("#院所系管理按鈕").prop("disabled","");       
         } else {  
-          $("#郵件報名按鈕").prop("disabled","disabled"); 
+          $("#郵件報名按鈕").prop("disabled",""); 
           $("#帳號管理按鈕").prop("disabled","disabled");    
           $("#院所系管理按鈕").prop("disabled","disabled");         
         }

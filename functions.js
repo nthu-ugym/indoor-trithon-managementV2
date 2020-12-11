@@ -221,6 +221,7 @@ function initializaTable(){
     {
       field: "No1",
       title: "隊員1",      
+      title: "隊員1",      
       width: "100px",
     },
     {
@@ -600,7 +601,8 @@ function 新增比賽按鈕click(){
   $("#截止日期").val(""); 
   $("#截止時間").val("");   
   $("#參賽隊數").val("10"); 原先隊數=10;
-  $("#個人三鐵").prop("checked", "checked");  
+  //$("#個人三鐵").prop("checked", "checked");  
+  $("#三人跑步").prop("checked", "checked");  
   $("#跑步距離").val("");  $("#飛輪距離").val("");  $("#划船距離").val("");
   
   
@@ -626,7 +628,7 @@ function 比賽資訊click(){
   window.scrollTo(0,0);
 }
 
-function 報名名單click(){
+async function 報名名單click(){
   $("#比賽資訊Div").hide(); 
   $("#比賽資訊").css("background", "");$("#比賽資訊").css("color", "black");   
   $("#報名名單Div").show(); 
@@ -707,7 +709,7 @@ function 報名名單click(){
   
   console.log(比賽編號);  
   api6GetSignUpByGameId.gameId = 比賽編號;  
-  api6GetSignUpByGameId.getAPI(); //get 報名名單  
+  await api6GetSignUpByGameId.getAPI(); //get 報名名單  
   
 }
 
@@ -772,7 +774,11 @@ function 隊伍轉換(名次){
   return "第 "+ 名次.隊伍.substr(1) + " 隊";
 }
 
-function 比賽結果click(){
+async function 比賽結果click(){
+  if (報名名單 == undefined){
+    await 報名名單click();
+  }
+  
   $("#比賽資訊Div").hide(); 
   $("#比賽資訊").css("background", "");$("#比賽資訊").css("color", "black");  
   $("#報名名單Div").hide(); 
@@ -781,10 +787,10 @@ function 比賽結果click(){
   $("#比賽結果").css("background", "orange");$("#比賽結果").css("color", "white");    
   目前比賽頁面 = 3;
   
-  if (報名名單 == undefined){
-    報名名單click();
-  }
-  
+//  if (報名名單 == undefined){
+//    報名名單click();
+//  }
+
   //使用 API7 GetGameResults
   var postProcess = function (apiName, response) {
     比賽結果 = JSON.parse(response.data); 
@@ -1020,17 +1026,17 @@ function remove隊伍院系所(){
 
 function prepareExportHeader(exportGame){
   return  "報名名單:\r\n" +
-          "比賽編號:" + exportGame.比賽編號 + "\r\n" +
-          "比賽名稱:" + exportGame.比賽名稱 + " " +
-          "比賽名稱(英):" + exportGame.英文比賽名稱 + "\r\n" +      
-          "比賽說明:" + exportGame.比賽說明 + " " +
-          "比賽說明(英):" + exportGame.英文比賽說明 + "\r\n" +      
-          "比賽日期:" + exportGame.比賽日期 + "\r\n" +    
-          "比賽時間:" + exportGame.時間範圍 + "\r\n" +          
-          "比賽地點:" + exportGame.比賽地點 + " " +      
-          "比賽地點(英):" + exportGame.英文比賽地點 + "\r\n" +        
-          "比賽種類:" + exportGame.比賽種類 + "\r\n" +
-          "比賽隊數:" + exportGame.隊數限制 + "\r\n";
+          "比賽編號:" + "," + exportGame.比賽編號 + "\r\n" +
+          "比賽名稱:" + "," + exportGame.比賽名稱 + "\r\n" +
+          "比賽名稱(英):" + "," + exportGame.英文比賽名稱 + "\r\n" +      
+          //"比賽說明:" + "," + exportGame.比賽說明 + "\r\n" +
+          //"比賽說明(英):" + "," + exportGame.英文比賽說明 + "\r\n" +      
+          "比賽日期:" + "," + exportGame.比賽日期 + "\r\n" +    
+          "比賽時間:" + "," + exportGame.時間範圍 + "\r\n" +          
+          "比賽地點:" + "," + exportGame.比賽地點 + "\r\n" +      
+          "比賽地點(英):" + "," + exportGame.英文比賽地點 + "\r\n" +        
+          "比賽種類:" + "," + exportGame.比賽種類 + "\r\n" +
+          "比賽隊數:" + "," + exportGame.隊數限制 + "\r\n\r\n";
 }
 
 function ExportClick(index) {
@@ -1061,7 +1067,7 @@ function ExportClick(index) {
   var filenamePreStr ="";
   if (index==2) {
     filenamePreStr = "報名名單";
-    strToSave = magicHead + prepareExportHeader(exportGame);
+    strToSave = magicHead + prepareExportHeader(exportGame)+"隊伍編號, 學院所系, 隊員 1, 隊員 2, 隊員3 \r\n";
 
 
     //for (var i=1; i<exportGame.隊數限制+1; i++){
@@ -1082,8 +1088,10 @@ function ExportClick(index) {
       for (var j=1; j< 隊伍人數+1; j++){
         var 隊伍報名Str = 報名名單.隊伍[teamNumStr].報名者["No"+j.toString()];
         //console.log(隊伍報名Str);
+        var 運動項目 = 隊伍報名Str.運動.replace(/,/g, '\/');
+        //console.log(運動項目);
         隊伍報名 += (
-           "," + 隊伍報名Str.運動 + ":" + 
+           "," + 運動項目 + ":" + 
           ((隊伍報名Str.姓名=="")?"尚未報名":隊伍報名Str.姓名));
       }  
 
@@ -1094,11 +1102,31 @@ function ExportClick(index) {
   
   if (index==3) {
     filenamePreStr = "比賽結果";  
+    //轉換 "1:理學院,1:數學系" --> "理學院-數學系"，不熟 regular express，用笨方法
+    var StrNo1_1 = 比賽結果.第一名.學院系所
+    var StrNo1_2 = StrNo1_1.replace(new RegExp("[0-9]","g"), "");
+    var StrNo1_3 = StrNo1_2.replace(/,:/g, "-");
+    var StrNo1   = StrNo1_3.replace(/:/g,"");
+    
+    var StrNo2_1 = 比賽結果.第二名.學院系所
+    var StrNo2_2 = StrNo2_1.replace(new RegExp("[0-9]","g"), "");
+    var StrNo2_3 = StrNo2_2.replace(/,:/g, "-");
+    var StrNo2   = StrNo2_3.replace(/:/g,"");
+    
+    var StrNo3_1 = 比賽結果.第三名.學院系所
+    var StrNo3_2 = StrNo3_1.replace(new RegExp("[0-9]","g"), "");
+    var StrNo3_3 = StrNo3_2.replace(/,:/g, "-");
+    var StrNo3   = StrNo3_3.replace(/:/g,"");
+    
+    //console.log(StrNo1,"---", StrNo2,"---", StrNo3  );
+    //return
+    
     strToSave = magicHead + prepareExportHeader(exportGame) +
-      "比賽名次:\r\n" +
-      "第一名:"+比賽結果.第一名.隊伍+",學院系所:"+比賽結果.第一名.學院系所+",成績:"+比賽結果.第一名.成績+ "\r\n" + 
-      "第二名:"+比賽結果.第二名.隊伍+",學院系所:"+比賽結果.第二名.學院系所+",成績:"+比賽結果.第二名.成績+ "\r\n" +
-      "第三名:"+比賽結果.第三名.隊伍+",學院系所:"+比賽結果.第三名.學院系所+",成績:"+比賽結果.第三名.成績+ "\r\n";
+      "比賽名次:, 學院系所, 成績\r\n" +
+      "第一名:"+比賽結果.第一名.隊伍+",學院系所:"+StrNo1+","+比賽結果.第一名.成績+ "\r\n" + 
+      "第二名:"+比賽結果.第二名.隊伍+",學院系所:"+StrNo2+","+比賽結果.第二名.成績+ "\r\n" +
+      "第三名:"+比賽結果.第三名.隊伍+",學院系所:"+StrNo3+","+比賽結果.第三名.成績+ "\r\n\r\n" +
+      "隊伍編號, 學院所系, 隊員 1, 隊員 2, 隊員3 \r\n";
 
     
     //for (var i=1; i<exportGame.隊數限制+1; i++){
@@ -1118,9 +1146,10 @@ function ExportClick(index) {
         for (var j=1; j< 隊伍人數+1; j++){
           var 隊伍報名Str = 比賽結果.隊伍[teamNumStr].報名者["No"+j.toString()];
           //console.log(隊伍報名Str);
+          var 運動項目 = 隊伍報名Str.運動.replace(/,/g, '\/');
           隊伍報名 += (
-             "," + 隊伍報名Str.運動 + ":" + 
-            ((隊伍報名Str.姓名=="")?"尚未報名":隊伍報名Str.姓名) + "," + 隊伍報名Str.成績);
+             "," + 運動項目 + ":" + 
+            ((隊伍報名Str.姓名=="")?"尚未報名":隊伍報名Str.姓名) + " - " + 隊伍報名Str.成績);
         }  
 
         strToSave += 隊伍報名 + "\r\n";
@@ -1193,8 +1222,25 @@ function 檢查比賽資料完整(){
 function saveGame() {
   console.log("saveGame");
   
+  var newGameStart = $("#開始時間").val();
+  var newGameEnd   = $("#結束時間").val();
+  
+  for (var i=0; i< games.length; i++){
+    if (games[i].比賽日期 == $("#比賽日期").val() && parseInt(games[i].比賽編號) != parseInt($("#比賽編號內容").text())) {
+      
+      var existGamePeriod   = games[i].時間範圍;
+      var existGameStartEnd = existGamePeriod.split('~');
+      console.log((newGameEnd < existGameStartEnd[0]), (newGameStart > existGameStartEnd[1]))
+      
+      if (!((newGameEnd < existGameStartEnd[0]) || (newGameStart > existGameStartEnd[1]))) {
+        alert("比賽日期時間與現行比賽編號: "+games[i].比賽編號+" 重疊");
+        return;
+      }
+    }
+  }
+    
   //check data integrity
-  if (檢查比賽資料完整()==false) return;
+  //if (檢查比賽資料完整()==false) return;
   
   if (confirm("請確定要儲存比賽!!!")){    
 

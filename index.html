@@ -58,7 +58,7 @@
   <!--  主頁面-->
   <div id="NTHU_header">
     <div style="font-size:20px;margin-left:30px; margin-right:30px" id="header">
-      <button style="font-size:20px" disabled="disabled" id="郵件報名按鈕"  onclick="郵件報名按鈕click()">郵件報名</button>
+      <button style="font-size:20px"                     id="郵件報名按鈕"  onclick="郵件報名按鈕click()">郵件報名</button>
       <button style="font-size:20px" disabled="disabled" id="帳號管理按鈕"  onclick="帳號管理按鈕click()">帳號管理</button>
       <button style="font-size:20px" disabled="disabled" id="院所系管理按鈕" onclick="院所系管理按鈕click()">院所系管理</button> 
       <button style="font-size:20px" id="登出入按鈕"  onclick="登出入按鈕click()">登入</button> 
@@ -157,6 +157,7 @@
       <p>
         <label class="新增比賽表格項目標題">比賽種類:</label><br><br>
 
+<!-- 原先設計 9 項比賽
         <input type="radio" id="個人三鐵" checked="checked" name="比賽種類">
         <label class="新增比賽表格Raido">個人三鐵(個人做三項)</label>
 
@@ -182,7 +183,23 @@
         <label class="新增比賽表格Raido">個人飛輪</label>
 
         <input type="radio" id="個人划船" name="比賽種類" style="margin-left:161px">
-        <label class="新增比賽表格Raido">個人划船</label>                                                       
+        <label class="新增比賽表格Raido">個人划船</label>  
+-->            
+
+       <!-- 2020-12-11 先只有飛輪和跑步 -->
+        <input type="radio" id="三人跑步" name="比賽種類" checked="checked">
+        <label class="新增比賽表格Raido">三人跑步</label>
+
+        <input type="radio" id="三人飛輪" name="比賽種類" style="margin-left:100px">
+        <label class="新增比賽表格Raido">三人飛輪</label>   
+
+        <input type="radio" id="個人跑步" name="比賽種類" style="margin-left:100px">
+        <label class="新增比賽表格Raido">個人跑步</label>
+
+        <input type="radio" id="個人飛輪" name="比賽種類" style="margin-left:100px">
+        
+        <label class="新增比賽表格Raido">個人飛輪</label> 
+                                                              
       </p>
       <br>
 
