@@ -933,7 +933,7 @@ function createAccount() {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
-      alert("新增帳號失敗:", errorMessage);
+      alert("新增帳號失敗，可能是該 email address 已被使用或取消，請洽系統管理員:", errorMessage);
       // ...                                                                  
     });  
   }
@@ -1244,13 +1244,21 @@ function saveGame() {
   
   if (confirm("請確定要儲存比賽!!!")){    
 
-    var 比賽距離 = 
-        "跑步機: "+$("#跑步距離").val()+"公里 ,飛輪車: "+$("#飛輪距離").val()+"公里 ,划船器: "+$("#划船距離").val()+"公尺";
+    
+    var 跑步距離 = ($("#跑步距離").val()!=undefined)?$("#跑步距離").val():"0";
+    var 飛輪距離 = ($("#飛輪距離").val()!=undefined)?$("#飛輪距離").val():"0";
+    var 划船距離 = ($("#划船距離").val()!=undefined)?$("#划船距離").val():"0";
+    
+    跑步距離 = Number.isInteger(parseInt(跑步距離))?跑步距離:"0";
+    飛輪距離 = Number.isInteger(parseInt(飛輪距離))?飛輪距離:"0";
+    划船距離 = Number.isInteger(parseInt(划船距離))?划船距離:"0";
+    var 比賽距離 = "跑步機: "+跑步距離+"公里 ,飛輪車: "+飛輪距離+"公里 ,划船器: "+划船距離+"公尺";
+  
     console.log(比賽距離);
     
     var 學院系所 = [];
     for (var i=1; i< parseInt($("#參賽隊數").val())+1; i++) {
-      console.log(i);
+      //console.log(i);
       var 隊伍 = $("#隊伍學院"+i.toString()).prop("selectedIndex").toString()+":" +
                 $("#隊伍學院"+i.toString()).val()+","                            +
                 $("#隊伍系所"+i.toString()).prop("selectedIndex").toString()+":" +
@@ -1280,7 +1288,8 @@ function saveGame() {
     };
     
     console.log(game);
-        
+   
+   
     //API to write to database
     api8CreateOrUpdateGame.gameId = game.比賽編號.toString();
     api8CreateOrUpdateGame.body = game;
