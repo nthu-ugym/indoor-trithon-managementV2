@@ -353,7 +353,8 @@ function editClick(e) {
     if (distArr[i]!=undefined) {
       var execise = distArr[i].split(":");
       var exeType = execise[0].substr(0,2);
-      var exeDist = execise[1].replace(/\D/g,'');
+      //var exeDist = execise[1].replace(/\D/g,'');
+      var exeDist = execise[1].replace(/[^\d.-]/g,'');
       console.log(exeType, exeDist);
       $("#"+exeType+"距離").val(exeDist);
     }
@@ -1252,7 +1253,8 @@ function saveGame() {
     跑步距離 = Number.isInteger(parseInt(跑步距離))?跑步距離:"0";
     飛輪距離 = Number.isInteger(parseInt(飛輪距離))?飛輪距離:"0";
     划船距離 = Number.isInteger(parseInt(划船距離))?划船距離:"0";
-    var 比賽距離 = "跑步機: "+跑步距離+"公里 ,飛輪車: "+飛輪距離+"公里 ,划船器: "+划船距離+"公尺";
+    //var 比賽距離 = "跑步機: "+跑步距離+"公里 ,飛輪車: "+飛輪距離+"公里 ,划船器: "+划船距離+"公尺";
+    var 比賽距離 = "跑步機: "+跑步距離+"公里 ,飛輪車: "+飛輪距離+"公里";
   
     console.log(比賽距離);
     
