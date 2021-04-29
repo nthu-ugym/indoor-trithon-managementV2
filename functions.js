@@ -843,7 +843,16 @@ async function 比賽結果click(){
       比賽結果record["隊伍編號"]= "第 "+i.toString()+" 隊";
 
       var teamNumStr = "T"+i.toString();
-      var 隊伍標頭Str = 比賽結果.隊伍[teamNumStr].學院系所;
+      
+      // 2021-04-29 add the try block for missing data
+      try{
+        var 隊伍標頭Str = 比賽結果.隊伍[teamNumStr].學院系所;
+      } catch (err) {
+        console.log(err);
+        continue;
+      }
+      // end
+      
       var 隊伍標頭Arr = 隊伍標頭Str.split(/[:,]+/);   
       //比賽結果record["學院所系"]= 隊伍標頭Arr[1]+" - "+隊伍標頭Arr[3];
       比賽結果record["學院所系"]= (隊伍標頭Str=="")?"無指定":隊伍標頭Arr[1]+" - "+隊伍標頭Arr[3];
