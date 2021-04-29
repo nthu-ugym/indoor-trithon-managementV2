@@ -1,4 +1,4 @@
-$("#版本").text("V2.12"); //version
+$("#版本").text("V2.13"); //2021-04-29 add the try block for missing data
 
 // 初始變數
 var 已登入 = -1; // -1:未登入, 0:登入中, 1:已登入
